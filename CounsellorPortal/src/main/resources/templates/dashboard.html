@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Dashboard</title></head>
+<body>
+<h2>Dashboard</h2>
+<div>
+    <p>Total Enquiries: <span th:text="${stats.totalEnquiries}"></span></p>
+    <p>New: <span th:text="${stats.newEnquiries}"></span></p>
+    <p>Enrolled: <span th:text="${stats.enrolledEnquiries}"></span></p>
+    <p>Lost: <span th:text="${stats.lostEnquiries}"></span></p>
+</div>
+<a th:href="@{/enquiries/add(cId=${counsellorId})}">Add Enquiry</a> |
+<a th:href="@{/enquiries/view(cId=${counsellorId})}">View Enquiries</a>
+</body>
+</html>

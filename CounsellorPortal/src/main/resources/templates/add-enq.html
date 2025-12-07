@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>Add Enquiry</title></head>
+<body>
+<h2>Add Enquiry</h2>
+<form th:action="@{/enquiries/save}" method="post" th:object="${enquiry}">
+    <input th:field="*{stuName}" placeholder="Student Name" required/><br/>
+    <input th:field="*{stuPhno}" placeholder="Phone"/><br/>
+    <select th:field="*{classMode}">
+        <option value="Online">Online</option>
+        <option value="Offline">Offline</option>
+    </select><br/>
+    <select th:field="*{courseId}">
+        <option th:each="c : ${courses}" th:value="${c.courseId}" th:text="${c.courseName}"></option>
+    </select><br/>
+    <select th:field="*{enqStatus}">
+        <option value="New">New</option>
+        <option value="Enrolled">Enrolled</option>
+        <option value="Lost">Lost</option>
+    </select><br/>
+    <input type="hidden" th:field="*{counsellorId}" th:value="${counsellorId}" />
+    <button type="submit">Save</button>
+</form>
+</body>
+</html>

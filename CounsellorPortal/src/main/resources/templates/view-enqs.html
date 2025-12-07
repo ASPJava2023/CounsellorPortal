@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head><title>View Enquiries</title></head>
+<body>
+<h2>Enquiries</h2>
+<table border="1">
+    <thead><tr><th>ID</th><th>Name</th><th>Phone</th><th>Course</th><th>Mode</th><th>Status</th><th>Action</th></tr></thead>
+    <tbody>
+    <tr th:each="e : ${enqs}">
+        <td th:text="${e.enqId}"></td>
+        <td th:text="${e.stuName}"></td>
+        <td th:text="${e.stuPhno}"></td>
+        <td th:text="${e.courseId}"></td>
+        <td th:text="${e.classMode}"></td>
+        <td th:text="${e.enqStatus}"></td>
+        <td><a th:href="@{/enquiries/edit/{id}(id=${e.enqId})}">Edit</a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
