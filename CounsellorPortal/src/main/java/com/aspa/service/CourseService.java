@@ -1,7 +1,8 @@
 package com.aspa.service;
 
-import org.jspecify.annotations.Nullable;
+import com.aspa.entity.Course;
+import java.util.List;
 
 public interface CourseService {
-    @Nullable Object listAll();
+    List<Course> listAll();
 }

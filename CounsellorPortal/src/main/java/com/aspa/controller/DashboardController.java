@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 @RequiredArgsConstructor
 public class DashboardController {
+
     private final EnquiryService enquiryService;
 
     @GetMapping("/dashboard")
@@ -19,4 +20,3 @@ public class DashboardController {
         return "dashboard";
     }
 }
-
