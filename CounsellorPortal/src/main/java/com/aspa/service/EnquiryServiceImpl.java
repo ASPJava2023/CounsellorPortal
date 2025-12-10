@@ -9,6 +9,8 @@ import com.aspa.entity.Enquiry;
 import com.aspa.repository.CourseRepo;
 import com.aspa.repository.CounsellorRepo;
 import com.aspa.repository.EnquiryRepo;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -49,32 +51,53 @@ public class EnquiryServiceImpl implements EnquiryService {
 
     @Override
     public List<EnquiryDto> getEnquiriesByFilter(EnqFilterRequestDto filter) {
-        List<Enquiry> list;
-        if (filter != null && filter.getCounsellorId() != null) {
-            list = enquiryRepo.findByCounsellorCounsellorId(filter.getCounsellorId());
-        } else {
-            list = enquiryRepo.findAll();
+        Enquiry enq = new Enquiry();
+
+        if (filter.getCounsellorId() != null) {
+            Counsellor c = new Counsellor();
+            c.setCounsellorId(filter.getCounsellorId());
+            enq.setCounsellor(c);
         }
 
-        return list.stream()
-                .filter(e -> filter == null || filter.getCourseId() == null || (e.getCourse() != null && e.getCourse().getCourseId().equals(filter.getCourseId())))
-                .filter(e -> filter == null || filter.getStatus() == null || (e.getEnqStatus() != null && e.getEnqStatus().equalsIgnoreCase(filter.getStatus())))
-                .filter(e -> filter == null || filter.getClassMode() == null || (e.getClassMode() != null && e.getClassMode().equalsIgnoreCase(filter.getClassMode())))
-                .map(this::mapToDto)
-                .collect(Collectors.toList());
+        if (filter.getCourseId() != null) {
+            Course c = new Course();
+            c.setCourseId(filter.getCourseId());
+            enq.setCourse(c);
+        }
+
+        if (filter.getClassMode() != null && !filter.getClassMode().isEmpty()) {
+            enq.setClassMode(filter.getClassMode());
+        }
+
+        if (filter.getStatus() != null && !filter.getStatus().isEmpty()) {
+            enq.setEnqStatus(filter.getStatus());
+        }
+
+        ExampleMatcher matcher = ExampleMatcher.matching()
+                .withIgnoreNullValues()
+                .withStringMatcher(ExampleMatcher.StringMatcher.CONTAINING);
+
+        Example<Enquiry> example = Example.of(enq, matcher);
+
+        List<Enquiry> list = enquiryRepo.findAll(example);
+
+        return list.stream().map(this::mapToDto).collect(Collectors.toList());
     }
 
     @Override
     public EnquiryDto updateEnquiry(EnquiryDto dto) {
-        if (dto == null || dto.getEnqId() == null) return null;
+        if (dto == null || dto.getEnqId() == null)
+            return null;
         Optional<Enquiry> opt = enquiryRepo.findById(dto.getEnqId());
-        if (opt.isEmpty()) return null;
+        if (opt.isEmpty())
+            return null;
         Enquiry enq = opt.get();
 
         enq.setStuName(dto.getStuName());
         enq.setStuPhno(dto.getStuPhno());
         enq.setClassMode(dto.getClassMode());
-        if (dto.getEnqStatus() != null) enq.setEnqStatus(dto.getEnqStatus());
+        if (dto.getEnqStatus() != null)
+            enq.setEnqStatus(dto.getEnqStatus());
         if (dto.getCourseId() != null) {
             courseRepo.findById(dto.getCourseId()).ifPresent(enq::setCourse);
         }
@@ -84,6 +107,11 @@ public class EnquiryServiceImpl implements EnquiryService {
 
         Enquiry saved = enquiryRepo.save(enq);
         return mapToDto(saved);
+    }
+
+    @Override
+    public EnquiryDto getEnquiryById(Long enqId) {
+        return enquiryRepo.findById(enqId).map(this::mapToDto).orElse(null);
     }
 
     @Override
@@ -103,13 +131,15 @@ public class EnquiryServiceImpl implements EnquiryService {
     }
 
     private EnquiryDto mapToDto(Enquiry e) {
-        if (e == null) return null;
+        if (e == null)
+            return null;
         return EnquiryDto.builder()
                 .enqId(e.getEnqId())
                 .stuName(e.getStuName())
                 .stuPhno(e.getStuPhno())
                 .classMode(e.getClassMode())
                 .courseId(e.getCourse() != null ? e.getCourse().getCourseId() : null)
+                .courseName(e.getCourse() != null ? e.getCourse().getCourseName() : null)
                 .enqStatus(e.getEnqStatus())
                 .counsellorId(e.getCounsellor() != null ? e.getCounsellor().getCounsellorId() : null)
                 .build();

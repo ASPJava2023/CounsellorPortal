@@ -1,4 +1,5 @@
 package com.aspa.controller;
+
 import com.aspa.dto.EnqFilterRequestDto;
 import com.aspa.dto.EnquiryDto;
 import com.aspa.service.CourseService;
@@ -32,20 +33,22 @@ public class EnquiryController {
     }
 
     @GetMapping("/view")
-    public String viewEnqs(@RequestParam Long cId, Model model) {
-        EnqFilterRequestDto filter = EnqFilterRequestDto.builder().counsellorId(cId).build();
+    public String viewEnqs(@RequestParam Long cId, @ModelAttribute EnqFilterRequestDto filter, Model model) {
+        filter.setCounsellorId(cId);
         List<EnquiryDto> list = enquiryService.getEnquiriesByFilter(filter);
         model.addAttribute("enqs", list);
         model.addAttribute("courses", courseService.listAll());
         model.addAttribute("counsellorId", cId);
+        model.addAttribute("filter", filter);
         return "view-enqs";
     }
 
     @GetMapping("/edit/{id}")
     public String editEnq(@PathVariable Long id, Model m) {
-        // load enquiry and courses
-        // omitted for brevity — implement findById in service
+        EnquiryDto dto = enquiryService.getEnquiryById(id);
+        m.addAttribute("enquiry", dto);
+        m.addAttribute("courses", courseService.listAll());
+        m.addAttribute("counsellorId", dto.getCounsellorId());
         return "add-enq";
     }
 }
-
