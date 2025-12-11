@@ -27,6 +27,9 @@ public class EnquiryServiceImpl implements EnquiryService {
 
     @Override
     public EnquiryDto addEnquiry(EnquiryDto dto) {
+        if (dto.getEnqId() != null) {
+            return updateEnquiry(dto);
+        }
         Course course = null;
         if (dto.getCourseId() != null) {
             course = courseRepo.findById(dto.getCourseId()).orElse(null);

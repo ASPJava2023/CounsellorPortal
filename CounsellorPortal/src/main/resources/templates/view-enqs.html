@@ -20,6 +20,8 @@
                     <div><strong th:text="${session.counsellor.name}">Counsellor Name</strong></div>
                 </div>
 
+                <a th:if="${session.counsellor != null}" th:href="@{/dashboard(cId=${counsellorId})}"
+                    class="btn btn-outline-light btn-sm me-2">Dashboard</a>
                 <a th:if="${session.counsellor != null}" th:href="@{/enquiries/add(cId=${counsellorId})}"
                     class="btn btn-outline-light btn-sm me-2">Add Enquiry</a>
                 <a th:if="${session.counsellor != null}" th:href="@{/logout}" class="btn btn-warning btn-sm">Logout</a>

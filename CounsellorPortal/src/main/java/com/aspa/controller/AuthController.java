@@ -1,4 +1,5 @@
 package com.aspa.controller;
+
 import com.aspa.dto.CounsellorDto;
 import com.aspa.service.CounsellorService;
 import lombok.RequiredArgsConstructor;
@@ -13,12 +14,15 @@ import jakarta.servlet.http.HttpSession;
 public class AuthController {
     private final CounsellorService counsellorService;
 
-    @GetMapping({"/", "/login"})
-    public String loginPage() { return "index"; }
+    @GetMapping({ "/", "/login" })
+    public String loginPage() {
+        return "index";
+    }
 
     @GetMapping("/register")
     public String registerPage(Model m) {
-        // Provide an empty CounsellorDto so Thymeleaf can bind the form (th:object="${counsellor}")
+        // Provide an empty CounsellorDto so Thymeleaf can bind the form
+        // (th:object="${counsellor}")
         m.addAttribute("counsellor", new CounsellorDto());
         return "register";
     }
@@ -36,6 +40,12 @@ public class AuthController {
         if (opt.isPresent()) {
             // store counsellor in HTTP session so templates can access it across pages
             session.setAttribute("counsellor", opt.get());
+
+            // store login time
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter
+                    .ofPattern("dd/MM/yyyy HH:mm:ss");
+            session.setAttribute("loginTime", java.time.LocalDateTime.now().format(formatter));
+
             return "redirect:/dashboard?cId=" + opt.get().getCounsellorId();
         } else {
             m.addAttribute("error", "Invalid credentials");
